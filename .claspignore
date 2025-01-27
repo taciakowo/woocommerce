@@ -1,0 +1,5 @@
+# Ignoruj katalogi i pliki niezwiązane z Apps Script
+**/node_modules/**
+.clasp.json
+package-lock.json
+package.json

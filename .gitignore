@@ -1,0 +1,26 @@
+# Ignoruj pliki konfiguracji CLASP
+.clasp.json
+.claspignore
+
+# Ignoruj katalogi build i tymczasowe
+node_modules/
+dist/
+build/
+
+# Ignoruj pliki związane z edytorami
+.vscode/
+.idea/
+
+# Ignoruj dane sesji i tymczasowe pliki systemowe
+*.log
+*.tmp
+.DS_Store
+.env
+
+# Ignoruj pliki blokady i zależności lokalnych
+package-lock.json
+yarn.lock
+
+# Ignoruj pliki blokady i zależności lokalnych
+settings.json
+
