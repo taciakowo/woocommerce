@@ -42,6 +42,8 @@ jobs:
       # Commit i push automatycznie zaktualizowanej dokumentacji
       - name: Commit Documentation
         if: steps.generate-documentation.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"

@@ -8,12 +8,36 @@ Footing to aplikacja Google Apps Script zintegrowana z WooCommerce, umożliwiaj�
 ## Spis treści
 - [Opis projektu](#opis-projektu)
 - [Moduły](#moduły)
+  - [Struktura plików](#struktura-plików)
   - [Główne moduły](#główne-moduły)
   - [Narzędzia](#narzędzia)
 - [Automatyczne generowanie dokumentacji](#automatyczne-generowanie-dokumentacji)
   
 
 ## Moduły
+
+### Struktura plików
+```plaintext
+├── .clasp.json
+├── Kod.js
+├── appsscript.json
+├── index.js
+├── modules/
+│   ├── category.js
+│   ├── eslint.config.js
+│   ├── export.js
+│   ├── inventory.js
+│   ├── parameters.js
+│   ├── products.js
+│   ├── schedule.js
+│   ├── sync.js
+├── utils/
+│   ├── api.js
+│   ├── config.js
+│   ├── helpers.js
+│   ├── logger.js
+│   ├── spreadsheet.js
+```
 
 ### Główne moduły
 - **category.js**: Brak opisu.

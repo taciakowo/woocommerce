@@ -2,8 +2,31 @@ import fs from 'fs';
 import path from 'path';
 
 const README_PATH = './README.md';
-const MODULES_PATH = './src/modules/';
-const UTILS_PATH = './src/utils/';
+const PROJECT_ROOT = './src/';
+const MODULES_PATH = path.join(PROJECT_ROOT, 'modules/');
+const UTILS_PATH = path.join(PROJECT_ROOT, 'utils/');
+
+/**
+ * Rekurencyjnie buduje strukturę folderów i plików w formacie tekstowym.
+ * @param {string} dirPath - Ścieżka do katalogu.
+ * @param {string} indent - Wcięcie dla elementów podrzędnych.
+ * @returns {string} Tekstowa reprezentacja struktury.
+ */
+function buildFileStructure(dirPath, indent = '') {
+  if (!fs.existsSync(dirPath)) return '';
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  return entries
+    .map(entry => {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        return `${indent}├── ${entry.name}/\n${buildFileStructure(fullPath, indent + '│   ')}`;
+      } else {
+        return `${indent}├── ${entry.name}`;
+      }
+    })
+    .join('\n');
+}
 
 /**
  * Wyodrębnia pierwszy komentarz z pliku.
@@ -41,6 +64,7 @@ function generateTableOfContents() {
 ## Spis treści
 - [Opis projektu](#opis-projektu)
 - [Moduły](#moduły)
+  - [Struktura plików](#struktura-plików)
   - [Główne moduły](#główne-moduły)
   - [Narzędzia](#narzędzia)
 - [Automatyczne generowanie dokumentacji](#automatyczne-generowanie-dokumentacji)
@@ -53,6 +77,7 @@ function generateTableOfContents() {
 function generateReadme() {
   const modules = listFilesWithDescriptions(MODULES_PATH);
   const utils = listFilesWithDescriptions(UTILS_PATH);
+  const fileStructure = buildFileStructure(PROJECT_ROOT);
 
   const content = `
 # Footing - System Zarządzania Produktami
@@ -63,6 +88,11 @@ Footing to aplikacja Google Apps Script zintegrowana z WooCommerce, umożliwiaj�
 ${generateTableOfContents()}
 
 ## Moduły
+
+### Struktura plików
+\`\`\`plaintext
+${fileStructure}
+\`\`\`
 
 ### Główne moduły
 ${modules}
