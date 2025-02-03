@@ -1,0 +1,59 @@
+{
+  "functions": [
+    {
+      "name": "exportProductChanges",
+      "description": "Eksportuje zmiany produktów do WooCommerce."
+    },
+    {
+      "name": "updateInventoryHistory",
+      "description": "Aktualizuje historię stanów magazynowych.",
+      "params": [
+        {"name": "sku", "type": "string", "description": "SKU produktu."},
+        {"name": "newStock", "type": "number", "description": "Nowy stan magazynowy."},
+        {"name": "source", "type": "string", "description": "Źródło zmiany (np. 'G->W' lub 'W->G')."}
+      ]
+    },
+    {
+      "name": "syncStockBalanced",
+      "description": "Synchronizuje stany magazynowe między Google Sheets a WooCommerce."
+    },
+    {
+      "name": "fetchAllProductParameters",
+      "description": "Pobiera wszystkie parametry produktu.",
+      "returns": {"type": "Map<string, string>", "description": "Mapa zawierająca parametry produktu."}
+    },
+    {
+      "name": "addNewProduct",
+      "description": "Dodaje nowy produkt do WooCommerce.",
+      "params": [
+        {"name": "product", "type": "Object", "description": "Obiekt zawierający dane produktu."}
+      ]
+    },
+    {
+      "name": "generateKeywordSuggestions",
+      "description": "Generuje propozycje słów kluczowych na podstawie produktów.",
+      "returns": {"type": "string[]", "description": "Tablica słów kluczowych."}
+    },
+    {
+      "name": "getSettings",
+      "description": "Pobiera ustawienia z Google Sheets.",
+      "returns": {"type": "Object", "description": "Obiekt zawierający ustawienia."}
+    },
+    {
+      "name": "extractDescription",
+      "description": "Ekstraktuje opis z pliku.",
+      "params": [
+        {"name": "filePath", "type": "string", "description": "Ścieżka do pliku."}
+      ],
+      "returns": {"type": "string", "description": "Opis z pliku lub 'Brak opisu.'"}
+    },
+    {
+      "name": "listFilesWithDescriptions",
+      "description": "Wyświetla listę plików z opisami.",
+      "params": [
+        {"name": "dirPath", "type": "string", "description": "Ścieżka do katalogu."}
+      ],
+      "returns": {"type": "string", "description": "Lista plików z opisami lub 'Brak modułów do wyświetlenia.'"}
+    }
+  ]
+}
