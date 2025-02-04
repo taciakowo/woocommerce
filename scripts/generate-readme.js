@@ -83,11 +83,12 @@ function generateTableOfContents() {
 function generateReadme() {
   console.log('📄 Generowanie README.md...');
 
-  const modules = listFilesWithDescriptions(MODULES_PATH);
-  const utils = listFilesWithDescriptions(UTILS_PATH);
-  const fileStructure = buildFileStructure(PROJECT_ROOT);
+  try {
+    const modules = listFilesWithDescriptions(MODULES_PATH);
+    const utils = listFilesWithDescriptions(UTILS_PATH);
+    const fileStructure = buildFileStructure(PROJECT_ROOT);
 
-  const content = `
+    const content = `
 # Footing - System Zarządzania Produktami
 
 ## Opis projektu
@@ -116,8 +117,11 @@ Ten plik został wygenerowany automatycznie za pomocą skryptu \`generate-readme
 > Dokumentacja jest aktualizowana przy każdej zmianie w plikach modułów lub narzędzi.
 `;
 
-  fs.writeFileSync(README_PATH, content);
-  console.log('✅ README.md zaktualizowany.');
+    fs.writeFileSync(README_PATH, content);
+    console.log('✅ README.md zaktualizowany.');
+  } catch (error) {
+    console.error('Error generating README:', error);
+  }
 }
 
 // Uruchamia generowanie README

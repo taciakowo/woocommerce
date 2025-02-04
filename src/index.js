@@ -178,6 +178,7 @@ globalThis.runFetchProductParameters = function () {
     const productId = response.getResponseText().trim();
     if (productId) {
       const params = fetchAllProductParameters(productId);
+      const params = getParameters();
       ui.alert(`Pobrano parametry dla produktu ID: ${productId}`);
     } else {
       ui.alert('Nie podano ID produktu.');

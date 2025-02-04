@@ -189,4 +189,10 @@ describe('generateReadme', () => {
       expect.stringContaining('Zapisuje zdarzenia w zakładce "logi".')
     );
   });
+
+  it('should generate README.md file', () => {
+    const readmePath = path.join(__dirname, '../../README.md');
+    generateReadme();
+    expect(fs.existsSync(readmePath)).toBe(true);
+  });
 });
