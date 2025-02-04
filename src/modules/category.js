@@ -1,12 +1,19 @@
-let categoryCache = null; // Cache dla kategorii produktów
+import dotenv from 'dotenv';
+import { getSettings } from '../utils/spreadsheet.js';
+import { sendToWooCommerce } from '../utils/api.js';
+import { logEvent } from '../utils/logger.js';
+
+dotenv.config();
+
+let categoryCache = null;
 
 export function fetchProductCategories() {
   if (categoryCache) {
-    return categoryCache; // Zwróć kategorie z cache, jeśli dostępne
+    return categoryCache;
   }
 
   const settings = getSettings();
-  const url = `${settings.base_url}/wp-json/wc/v3/products/categories?per_page=100`;
+  const url = `${settings.WOO_BASE_URL}/wp-json/wc/v3/products/categories?per_page=100`;
   const response = sendToWooCommerce(url, 'get');
 
   if (response.status !== 200) {
@@ -17,3 +24,10 @@ export function fetchProductCategories() {
   categoryCache = response.data.map(category => `category: ${category.name}`);
   return categoryCache;
 }
+
+export function getCategory() {
+  const categoryId = process.env.CATEGORY_ID;
+  // Implementacja funkcji getCategory
+}
+
+globalThis.fetchProductCategories = fetchProductCategories;

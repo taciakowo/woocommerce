@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "20"
 
       # Instalacja zależności
       - name: Install dependencies
@@ -37,16 +37,17 @@ jobs:
 
       # Generowanie dokumentacji
       - name: Generate documentation
+        id: generate-documentation
         run: npm run generate-docs
 
       # Commit i push automatycznie zaktualizowanej dokumentacji
       - name: Commit Documentation
-        if: steps.generate-documentation.outcome == 'success'
+        if: success() && steps.generate-documentation.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "Automatyczna aktualizacja dokumentacji" || echo "Brak zmian do commitowania"
+          git commit -m "🔄 Automatyczna aktualizacja dokumentacji" || echo "Brak zmian do commitowania"
           git push

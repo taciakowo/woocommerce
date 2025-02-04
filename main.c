@@ -6,7 +6,8 @@ void D1();
 void D2();
 void D3();
 
-int main() {
+int main()
+{
     G1();
     D1();
     D2();

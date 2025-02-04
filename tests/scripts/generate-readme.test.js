@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-const README_PATH = './README.md';
 const PROJECT_ROOT = './src/';
 const MODULES_PATH = path.join(PROJECT_ROOT, 'modules/');
 const UTILS_PATH = path.join(PROJECT_ROOT, 'utils/');
@@ -122,3 +121,72 @@ Ten plik został wygenerowany automatycznie za pomocą skryptu \`generate-readme
 
 // Uruchamia generowanie README
 generateReadme();
+
+import fs from 'fs';
+import path from 'path';
+import { generateReadme } from '../../scripts/generate-readme.js';
+
+jest.mock('fs');
+jest.mock('path');
+
+describe('generateReadme', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test('Generuje README.md z poprawnymi danymi', () => {
+    const mockModules = [
+      { name: 'category.js', description: 'Pobiera kategorie produktów z WooCommerce.' },
+      { name: 'inventory.js', description: 'Aktualizuje historię stanów magazynowych.' },
+    ];
+
+    const mockUtils = [
+      { name: 'api.js', description: 'Wysyła zapytanie do WooCommerce.' },
+      { name: 'logger.js', description: 'Zapisuje zdarzenia w zakładce "logi".' },
+    ];
+
+    fs.readdirSync.mockImplementation((dirPath) => {
+      if (dirPath.includes('modules')) {
+        return mockModules.map((mod) => mod.name);
+      }
+      if (dirPath.includes('utils')) {
+        return mockUtils.map((util) => util.name);
+      }
+      return [];
+    });
+
+    fs.readFileSync.mockImplementation((filePath) => {
+      const fileName = path.basename(filePath);
+      const module = mockModules.find((mod) => mod.name === fileName);
+      const util = mockUtils.find((util) => util.name === fileName);
+      if (module) {
+        return `/**\n * ${module.description}\n */`;
+      }
+      if (util) {
+        return `/**\n * ${util.description}\n */`;
+      }
+      return '';
+    });
+
+    fs.writeFileSync.mockImplementation(() => {});
+
+    generateReadme();
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining('Pobiera kategorie produktów z WooCommerce.')
+    );
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining('Aktualizuje historię stanów magazynowych.')
+    );
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining('Wysyła zapytanie do WooCommerce.')
+    );
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining('Zapisuje zdarzenia w zakładce "logi".')
+    );
+  });
+});

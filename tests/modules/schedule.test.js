@@ -1,25 +1,41 @@
-import { scheduleSync } from '../../src/modules/schedule.js';
+import dotenv from 'dotenv';
+import { scheduledProductExport } from '../../src/modules/schedule.js';
+
+dotenv.config();
 
 jest.mock('../../src/utils/logger.js', () => ({
   logEvent: jest.fn(),
 }));
 
-test('Harmonogramuje synchronizację', () => {
-  const mockTrigger = {
-    getHandlerFunction: jest.fn(() => 'syncStockBalanced'),
-  };
+jest.mock('../../src/modules/products.js', () => ({
+  getProductIdBySku: jest.fn(),
+  addNewProduct: jest.fn(),
+}));
 
-  global.ScriptApp = {
-    getProjectTriggers: jest.fn(() => [mockTrigger]),
-    newTrigger: jest.fn(() => ({
-      timeBased: jest.fn(() => ({
-        everyMinutes: jest.fn(() => ({
-          create: jest.fn(),
-        })),
+jest.mock('../../src/utils/spreadsheet.js', () => ({
+  getSettings: jest.fn(() => ({
+    SHEET_ID: process.env.SHEET_ID,
+    PRODUCTS_SHEET: process.env.PRODUCTS_SHEET,
+  })),
+}));
+
+global.SpreadsheetApp = {
+  openById: jest.fn(() => ({
+    getSheetByName: jest.fn(() => ({
+      getDataRange: jest.fn(() => ({
+        getValues: jest.fn(() => [
+          ['sku', 'date_on_sale_from'],
+          ['sku123', new Date().toISOString()],
+        ]),
       })),
     })),
-  };
+  })),
+};
 
-  scheduleSync();
-  expect(global.ScriptApp.getProjectTriggers).toHaveBeenCalled();
+test('Zaplanowany eksport produktów', () => {
+  scheduledProductExport();
+  expect(global.SpreadsheetApp.openById).toHaveBeenCalled();
+  expect(global.SpreadsheetApp.openById().getSheetByName).toHaveBeenCalled();
+  expect(global.SpreadsheetApp.openById().getSheetByName().getDataRange).toHaveBeenCalled();
+  expect(global.SpreadsheetApp.openById().getSheetByName().getDataRange().getValues).toHaveBeenCalled();
 });

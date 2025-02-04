@@ -1,15 +1,11 @@
-import { getSheetId, setSheetId } from '../../src/utils/initial.gs';
+import dotenv from 'dotenv';
+import { getSheetId, setSheetId } from '../../src/utils/initial.js';
 
-jest.mock('../../src/utils/initial.gs', () => ({
-  getSheetId: jest.fn(() => 'mock-sheet-id'),
-  setSheetId: jest.fn(),
-}));
+dotenv.config();
 
-test('Poprawnie pobiera SHEET_ID', () => {
-  expect(getSheetId()).toBe('mock-sheet-id');
-});
-
-test('Poprawnie ustawia SHEET_ID', () => {
+test('Poprawnie pobiera i ustawia ID arkusza', () => {
+  const sheetId = getSheetId();
+  expect(sheetId).toBe(process.env.SHEET_ID);
   setSheetId('new-sheet-id');
-  expect(setSheetId).toHaveBeenCalledWith('new-sheet-id');
+  expect(process.env.SHEET_ID).toBe('new-sheet-id');
 });

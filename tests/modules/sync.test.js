@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
 import { syncStockBalanced } from '../../src/modules/sync.js';
+
+dotenv.config();
 
 jest.mock('../../src/utils/api.js', () => ({
   sendToWooCommerce: jest.fn(() => ({
@@ -32,4 +35,5 @@ test('Synchronizuje stany magazynowe', () => {
 
   syncStockBalanced();
   expect(global.SpreadsheetApp.openById).toHaveBeenCalled();
+  expect(mockSheet.getRange).toHaveBeenCalled();
 });

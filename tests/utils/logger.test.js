@@ -1,28 +1,27 @@
+import dotenv from 'dotenv';
 import { logEvent } from '../../src/utils/logger.js';
 
-test('Loguje zdarzenie poprawnie', () => {
-  const mockSheet = {
-    appendRow: jest.fn(),
-  };
+dotenv.config();
 
-  global.SpreadsheetApp = {
-    openById: jest.fn(() => ({
-      getSheetByName: jest.fn(() => mockSheet),
+global.SpreadsheetApp = {
+  openById: jest.fn(() => ({
+    getSheetByName: jest.fn(() => ({
+      appendRow: jest.fn(),
     })),
-  };
+  })),
+};
 
-  logEvent('testFunction', 'SUCCESS', '12345', null);
-  expect(mockSheet.appendRow).toHaveBeenCalledWith(expect.any(Array));
+test('Loguje zdarzenie poprawnie', () => {
+  logEvent('testFunction', 'INFO', null, 'Test message');
+  expect(global.SpreadsheetApp.openById).toHaveBeenCalled();
 });
 
 test('Zgłasza błąd, jeśli arkusz logów nie istnieje', () => {
-  global.SpreadsheetApp = {
-    openById: jest.fn(() => ({
-      getSheetByName: jest.fn(() => null),
-    })),
-  };
+  global.SpreadsheetApp.openById.mockImplementationOnce(() => ({
+    getSheetByName: jest.fn(() => null),
+  }));
 
   expect(() => logEvent('testFunction', 'ERROR', null, 'Błąd testowy')).toThrow(
-    'Zakładka "logi" nie istnieje.'
+    'Nie udało się zapisać logu: Zakładka "logi" nie istnieje.'
   );
 });

@@ -1,4 +1,7 @@
 import { logEvent } from '../utils/logger.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Generuje propozycje słów kluczowych na podstawie produktów.

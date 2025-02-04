@@ -1,12 +1,15 @@
 import { logEvent } from '../../utils/logger.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Dodaje brakujące kolumny w zakładce "produkty".
  * @param {Map<string, string>} params - Mapa parametrów produktu.
  */
 export function addMissingColumnsToProducts(params) {
-  const productSheet = SpreadsheetApp.openById(globalThis.SHEET_ID).getSheetByName(globalThis.PRODUCTS_SHEET);
-  const paramSheet = SpreadsheetApp.openById(globalThis.SHEET_ID).getSheetByName(globalThis.WOO_PARAMETERS_SHEET);
+  const productSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('produkty');
+  const paramSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('woo_parametry');
   const headers = productSheet.getDataRange().getValues()[0];
   const wooParams = paramSheet.getDataRange().getValues();
 
@@ -31,3 +34,11 @@ export function addMissingColumnsToProducts(params) {
 }
 
 globalThis.addMissingColumnsToProducts = addMissingColumnsToProducts;
+
+export function getColumns() {
+  const productSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('produkty');
+  const headers = productSheet.getDataRange().getValues()[0];
+  return headers;
+}
+
+globalThis.getColumns = getColumns;

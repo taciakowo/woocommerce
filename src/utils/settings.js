@@ -1,13 +1,11 @@
 import CryptoJS from 'crypto-js';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import './dotenv.config.js';
 
 /**
  * Pobiera ustawienia WooCommerce i deszyfruje klucze.
  * @returns {Object} - Obiekt ustawień.
  */
-function getSettings() {
+export function getSettings() {
   try {
     const SHEET_ID = getDynamicSheetId();
     const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SETTINGS_SHEET);

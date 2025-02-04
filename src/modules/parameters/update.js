@@ -1,5 +1,8 @@
 import { logEvent } from '../../utils/logger.js';
 import { fetchAllProductParameters } from './fetch.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Aktualizuje zakładkę "woo_parametry".
@@ -11,7 +14,7 @@ export function updateWooParametersSheet(params) {
     return;
   }
 
-  const sheet = SpreadsheetApp.openById(globalThis.SHEET_ID).getSheetByName(globalThis.WOO_PARAMETERS_SHEET);
+  const sheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('woo_parametry');
   const existingData = sheet.getDataRange().getValues();
   const existingParams = new Set(existingData.map(row => row[0]));
 
@@ -30,3 +33,11 @@ export function updateWooParametersSheet(params) {
 }
 
 globalThis.updateWooParametersSheet = updateWooParametersSheet;
+
+export function updateParameters() {
+  const params = fetchAllProductParameters();
+  updateWooParametersSheet(params);
+  logEvent('updateParameters', 'SUCCESS', null, 'Parameters updated successfully.');
+}
+
+globalThis.updateParameters = updateParameters;

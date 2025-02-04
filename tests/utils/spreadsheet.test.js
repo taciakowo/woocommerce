@@ -1,32 +1,31 @@
+import dotenv from 'dotenv';
 import { getSettings } from '../../src/utils/spreadsheet.js';
 
-test('Poprawnie pobiera ustawienia z arkusza', () => {
-  const mockSheet = {
-    getDataRange: jest.fn(() => ({
-      getValues: jest.fn(() => [
-        ['consumer_key', '12345'],
-        ['consumer_secret', '67890'],
-      ]),
-    })),
-  };
+dotenv.config();
 
-  global.SpreadsheetApp = {
-    openById: jest.fn(() => ({
-      getSheetByName: jest.fn(() => mockSheet),
+global.SpreadsheetApp = {
+  openById: jest.fn(() => ({
+    getSheetByName: jest.fn(() => ({
+      getDataRange: jest.fn(() => ({
+        getValues: jest.fn(() => [
+          ['SHEET_ID', process.env.SHEET_ID],
+          ['LOGS_SHEET', process.env.LOGS_SHEET],
+          ['ADMIN_EMAIL', process.env.ADMIN_EMAIL],
+          ['ALLEGRO_TOKEN', process.env.ALLEGRO_TOKEN],
+          ['SHOP_ID', process.env.SHOP_ID],
+        ]),
+      })),
     })),
-  };
+  })),
+};
 
+test('Poprawnie pobiera ustawienia z pliku .env.', () => {
   const settings = getSettings();
-  expect(settings.consumer_key).toBe('12345');
-  expect(settings.consumer_secret).toBe('67890');
-});
-
-test('Zwraca błąd, jeśli brak zakładki "ustawienia"', () => {
-  global.SpreadsheetApp = {
-    openById: jest.fn(() => ({
-      getSheetByName: jest.fn(() => null),
-    })),
-  };
-
-  expect(() => getSettings()).toThrow('Zakładka "ustawienia" nie istnieje.');
+  expect(settings).toEqual({
+    SHEET_ID: process.env.SHEET_ID,
+    LOGS_SHEET: process.env.LOGS_SHEET,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    ALLEGRO_TOKEN: process.env.ALLEGRO_TOKEN,
+    SHOP_ID: process.env.SHOP_ID,
+  });
 });

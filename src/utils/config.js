@@ -1,30 +1,33 @@
+import dotenv from 'dotenv';
 import CryptoJS from 'crypto-js';
 
-export const CONFIG = {
-  PRODUCTS_SHEET: 'produkty',
-  SETTINGS_SHEET: 'ustawienia',
-  LOGS_SHEET: 'logi',
-  WOO_PARAMETERS_SHEET: 'woo_parametry',
-  WOO_BASE_URL: 'base_url',
-  WOO_CONSUMER_KEY: 'consumer_key',
-  WOO_CONSUMER_SECRET: 'consumer_secret',
-};
+dotenv.config();
 
-// Klucz szyfrujący
 const ENCRYPTION_KEY = 'szyfrowany_klucz';
 
+globalThis.SHEET_ID = process.env.SHEET_ID;
+globalThis.PRODUCTS_SHEET = 'produkty';
+globalThis.SETTINGS_SHEET = 'ustawienia';
+globalThis.LOGS_SHEET = 'logi';
+globalThis.WOO_PARAMETERS_SHEET = 'woo_parametry';
+globalThis.WOO_BASE_URL = process.env.BASE_URL;
+globalThis.WOO_CONSUMER_KEY = process.env.WOO_CONSUMER_KEY;
+globalThis.WOO_CONSUMER_SECRET = process.env.WOO_CONSUMER_SECRET;
+
 /**
- * Ustawia `SHEET_ID` w pamięci podręcznej po zaszyfrowaniu.
- * @param {string} sheetId - Identyfikator arkusza
+ * Ustawia identyfikator arkusza.
+ * @param {string} sheetId - Identyfikator arkusza.
  */
 export function setSheetId(sheetId) {
   const encryptedId = CryptoJS.AES.encrypt(sheetId, ENCRYPTION_KEY).toString();
-  CacheService.getScriptCache().put('SHEET_ID', encryptedId, 21600); // 6 godzin
+  CacheService.getScriptCache().put('SHEET_ID', encryptedId, 21600);
 }
 
+globalThis.setSheetId = setSheetId;
+
 /**
- * Pobiera i odszyfrowuje `SHEET_ID` z pamięci podręcznej.
- * @returns {string} - Odszyfrowany `SHEET_ID`
+ * Pobiera identyfikator arkusza.
+ * @returns {string} - Identyfikator arkusza.
  */
 export function getSheetId() {
   const encryptedId = CacheService.getScriptCache().get('SHEET_ID');
@@ -32,19 +35,7 @@ export function getSheetId() {
     throw new Error('SHEET_ID nie jest dostępne w pamięci podręcznej.');
   }
   const bytes = CryptoJS.AES.decrypt(encryptedId, ENCRYPTION_KEY);
-  const decryptedId = bytes.toString(CryptoJS.enc.Utf8);
-  if (!decryptedId) {
-    throw new Error('Nie udało się odszyfrować SHEET_ID.');
-  }
-  return decryptedId;
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
 
-/**
- * Inicjalizuje `SHEET_ID` w pamięci podręcznej, jeśli go tam nie ma.
- */
-export function initializeSheetId() {
-  const existingSheetId = CacheService.getScriptCache().get('SHEET_ID');
-  if (!existingSheetId) {
-    setSheetId('1f6W4pP4VtMNY2m6iytNZ-AYnr-XqmbXDOEkSt5QsEbg'); // Twój ID arkusza
-  }
-}
+globalThis.getSheetId = getSheetId;

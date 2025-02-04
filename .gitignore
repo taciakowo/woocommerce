@@ -23,4 +23,7 @@ yarn.lock
 
 # Ignoruj pliki blokady i zależności lokalnych
 settings.json
-
+node_modules/
+.env
+credentials.json
+client_secret.json

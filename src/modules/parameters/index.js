@@ -1,3 +1,13 @@
-export { fetchAllProductParameters } from './fetch.js';
-export { updateWooParametersSheet } from './update.js';
-export { addMissingColumnsToProducts } from './columns.js';
+import dotenv from 'dotenv';
+import { fetchAllProductParameters } from './fetch.js';
+import { updateWooParametersSheet } from './update.js';
+
+dotenv.config();
+
+export function getParameters() {
+  const params = fetchAllProductParameters();
+  updateWooParametersSheet(params);
+  return params;
+}
+
+globalThis.getParameters = getParameters;

@@ -1,6 +1,9 @@
 import { logEvent } from '../../utils/logger.js';
 import { getProductById } from '../products.js';
 import { fetchProductCategories } from '../category.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Pobiera wszystkie parametry produktu, kategorie, atrybuty i metadane.
