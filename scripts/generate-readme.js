@@ -17,6 +17,7 @@ function buildFileStructure(dirPath, indent = '') {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
   return entries
+    .filter(entry => entry.name !== 'Kod.js') // Ignoruj plik Kod.js
     .map(entry => {
       const fullPath = path.join(dirPath, entry.name);
       if (entry.isDirectory()) {

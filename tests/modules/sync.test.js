@@ -14,12 +14,25 @@ jest.mock('../../src/utils/logger.js', () => ({
   logEvent: jest.fn(),
 }));
 
+global.SpreadsheetApp = {
+  openById: jest.fn(() => ({
+    getSheetByName: jest.fn(() => ({
+      getDataRange: jest.fn(() => ({
+        getValues: jest.fn(() => [
+          ['id', 'stock_quantity', 'initial_stock', 'last_sync'],
+          [123, 20, 15, ''],
+        ]),
+      })),
+    })),
+  })),
+};
+
 test('Synchronizuje stany magazynowe', () => {
   const mockSheet = {
     getDataRange: jest.fn(() => ({
-      getDisplayValues: jest.fn(() => [
+      getValues: jest.fn(() => [
         ['id', 'stock_quantity', 'initial_stock', 'last_sync'],
-        [123, 15, 10, ''],
+        [123, 20, 15, ''],
       ]),
     })),
     getRange: jest.fn(() => ({

@@ -1,4 +1,8 @@
 // src/utils/logger.js
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export function logEvent(functionName, event, productId = null, error = null) {
   try {
     const sheet = SpreadsheetApp.openById(globalThis.SHEET_ID).getSheetByName(globalThis.LOGS_SHEET);
@@ -10,13 +14,6 @@ export function logEvent(functionName, event, productId = null, error = null) {
 }
 
 globalThis.logEvent = logEvent;
-
-// src/utils/api.js
-import { logEvent } from './logger.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
-import './dotenv.config.js';
 
 /**
  * Wysyła zapytanie do WooCommerce.

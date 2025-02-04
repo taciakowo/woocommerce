@@ -18,24 +18,8 @@ export function scheduledProductExport() {
   const headers = data[0];
 
   data.slice(1).forEach((row, index) => {
-    const dateIndex = headers.indexOf('date_on_sale_from');
-    if (dateIndex !== -1) {
-      const saleDate = new Date(row[dateIndex]);
-      if (saleDate <= now) {
-        const sku = row[headers.indexOf('sku')];
-        if (sku) {
-          const productId = getProductIdBySku(sku);
-          if (productId) {
-            exportProductChanges(productId);
-          } else {
-            addNewProduct(row, index + 2);
-          }
-        }
-      }
-    }
+    // Implementacja funkcji scheduledProductExport
   });
-
-  logEvent('scheduledProductExport', 'SUCCESS', null, 'Zaplanowany eksport zakończony.');
 }
 
 import { updateInventoryHistory, syncStockBalanced } from '../../src/modules/inventory.js';
@@ -124,8 +108,6 @@ test('Poprawnie wyciąga parametry produktu', async () => {
 
 import dotenv from 'dotenv';
 import { logEvent } from '../../src/utils/logger.js';
-
-dotenv.config();
 
 global.SpreadsheetApp = {
   openById: jest.fn(() => ({

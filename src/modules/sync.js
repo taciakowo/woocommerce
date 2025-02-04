@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Synchronizuje stany magazynowe między Google Sheets a WooCommerce.
+ */
 export function syncStockBalanced() {
   const sheetId = process.env.SHEET_ID;
   if (typeof LockService !== 'undefined') {
@@ -64,32 +67,5 @@ export function syncStockBalanced() {
     });
   } catch (error) {
     logEvent('syncStockBalanced', 'Error', null, error.message);
-  }
-}
-
-{
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "googleappsscript/googleappsscript": true
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:googleappsscript/recommended",
-    "plugin:prettier/recommended"
-  ],
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "prettier",
-    "googleappsscript"
-  ],
-  "rules": {
-    "prettier/prettier": "error",
-    "no-unused-vars": "warn",
-    "no-console": "off",
-    "no-undef": "off"
   }
 }

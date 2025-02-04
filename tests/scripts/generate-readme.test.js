@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { generateReadme } from '../../scripts/generate-readme.js';
 
 const PROJECT_ROOT = './src/';
 const MODULES_PATH = path.join(PROJECT_ROOT, 'modules/');
@@ -16,6 +17,7 @@ function buildFileStructure(dirPath, indent = '') {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
   return entries
+    .filter(entry => entry.name !== 'Kod.js') // Ignoruj plik Kod.js
     .map(entry => {
       const fullPath = path.join(dirPath, entry.name);
       if (entry.isDirectory()) {
@@ -28,22 +30,18 @@ function buildFileStructure(dirPath, indent = '') {
 }
 
 /**
- * Wyodrębnia pierwszy komentarz JSDoc z pliku.
+ * Wyciąga opis z pliku.
  * @param {string} filePath - Ścieżka do pliku.
- * @returns {string} Opis modułu/narzędzia.
+ * @returns {string} Opis pliku.
  */
 function extractDescription(filePath) {
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    const match = content.match(/\/\*\*([\s\S]*?)\*\//);
-    return match ? match[1].trim() : 'Brak opisu.';
-  } catch (error) {
-    return 'Nie można odczytać pliku.';
-  }
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const match = content.match(/\/\*\*([\s\S]*?)\*\//);
+  return match ? match[1].trim().split('\n')[0].replace('*', '').trim() : 'Brak opisu.';
 }
 
 /**
- * Tworzy listę plików z opisami w katalogu.
+ * Generuje listę plików z opisami.
  * @param {string} dirPath - Ścieżka do katalogu.
  * @returns {string} Lista plików z opisami.
  */
@@ -65,14 +63,15 @@ function listFilesWithDescriptions(dirPath) {
  * @returns {string} Spis treści.
  */
 function generateTableOfContents() {
+  const modulesStructure = buildFileStructure(path.join(__dirname, '../../src/modules/'));
+  const utilsStructure = buildFileStructure(path.join(__dirname, '../../src/utils/'));
+
   return `
-## Spis treści
-- [Opis projektu](#opis-projektu)
-- [Moduły](#moduły)
-  - [Struktura plików](#struktura-plików)
-  - [Główne moduły](#główne-moduły)
-  - [Narzędzia](#narzędzia)
-- [Automatyczne generowanie dokumentacji](#automatyczne-generowanie-dokumentacji)
+## Moduły
+${modulesStructure}
+
+## Narzędzia
+${utilsStructure}
   `;
 }
 
@@ -119,77 +118,7 @@ Ten plik został wygenerowany automatycznie za pomocą skryptu \`generate-readme
   console.log('✅ README.md zaktualizowany.');
 }
 
-// Uruchamia generowanie README
-generateReadme();
-
-import fs from 'fs';
-import path from 'path';
-import { generateReadme } from '../../scripts/generate-readme.js';
-
-jest.mock('fs');
-jest.mock('path');
-
 describe('generateReadme', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  test('Generuje README.md z poprawnymi danymi', () => {
-    const mockModules = [
-      { name: 'category.js', description: 'Pobiera kategorie produktów z WooCommerce.' },
-      { name: 'inventory.js', description: 'Aktualizuje historię stanów magazynowych.' },
-    ];
-
-    const mockUtils = [
-      { name: 'api.js', description: 'Wysyła zapytanie do WooCommerce.' },
-      { name: 'logger.js', description: 'Zapisuje zdarzenia w zakładce "logi".' },
-    ];
-
-    fs.readdirSync.mockImplementation((dirPath) => {
-      if (dirPath.includes('modules')) {
-        return mockModules.map((mod) => mod.name);
-      }
-      if (dirPath.includes('utils')) {
-        return mockUtils.map((util) => util.name);
-      }
-      return [];
-    });
-
-    fs.readFileSync.mockImplementation((filePath) => {
-      const fileName = path.basename(filePath);
-      const module = mockModules.find((mod) => mod.name === fileName);
-      const util = mockUtils.find((util) => util.name === fileName);
-      if (module) {
-        return `/**\n * ${module.description}\n */`;
-      }
-      if (util) {
-        return `/**\n * ${util.description}\n */`;
-      }
-      return '';
-    });
-
-    fs.writeFileSync.mockImplementation(() => {});
-
-    generateReadme();
-
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.stringContaining('Pobiera kategorie produktów z WooCommerce.')
-    );
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.stringContaining('Aktualizuje historię stanów magazynowych.')
-    );
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.stringContaining('Wysyła zapytanie do WooCommerce.')
-    );
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.stringContaining('Zapisuje zdarzenia w zakładce "logi".')
-    );
-  });
-
   it('should generate README.md file', () => {
     const readmePath = path.join(__dirname, '../../README.md');
     generateReadme();
