@@ -36,6 +36,10 @@ test('Zaplanowany eksport produktów', () => {
   scheduledProductExport();
   expect(global.SpreadsheetApp.openById).toHaveBeenCalled();
   expect(global.SpreadsheetApp.openById().getSheetByName).toHaveBeenCalled();
-  expect(global.SpreadsheetApp.openById().getSheetByName().getDataRange).toHaveBeenCalled();
-  expect(global.SpreadsheetApp.openById().getSheetByName().getDataRange().getValues).toHaveBeenCalled();
+  expect(
+    global.SpreadsheetApp.openById().getSheetByName().getDataRange,
+  ).toHaveBeenCalled();
+  expect(
+    global.SpreadsheetApp.openById().getSheetByName().getDataRange().getValues,
+  ).toHaveBeenCalled();
 });

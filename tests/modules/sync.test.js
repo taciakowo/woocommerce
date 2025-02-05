@@ -24,9 +24,7 @@ global.SpreadsheetApp = {
         ]),
       })),
       getRange: jest.fn(() => ({
-        getValues: jest.fn(() => [
-          [123, 20, 15, ''],
-        ]),
+        getValues: jest.fn(() => [[123, 20, 15, '']]),
         setValue: jest.fn(),
       })),
     })),
@@ -42,9 +40,7 @@ test('Synchronizuje stany magazynowe', () => {
       ]),
     })),
     getRange: jest.fn(() => ({
-      getValues: jest.fn(() => [
-        [123, 20, 15, ''],
-      ]),
+      getValues: jest.fn(() => [[123, 20, 15, '']]),
       setValue: jest.fn(),
     })),
   };

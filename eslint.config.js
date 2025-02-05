@@ -1,5 +1,5 @@
-import js from "@eslint/js";
-import googleappsscript from "eslint-plugin-googleappsscript";
+import js from '@eslint/js';
+import googleappsscript from 'eslint-plugin-googleappsscript';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -14,8 +14,8 @@ export default [
       googleappsscript,
     },
     rules: {
-      "no-undef": "off",
-      "googleappsscript/no-undef": "off",
+      'no-undef': 'off',
+      'googleappsscript/no-undef': 'off',
     },
   },
 ];

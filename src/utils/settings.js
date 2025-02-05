@@ -8,17 +8,20 @@ import './dotenv.config.js';
 export function getSettings() {
   try {
     const SHEET_ID = getDynamicSheetId();
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SETTINGS_SHEET);
+    const sheet =
+      SpreadsheetApp.openById(SHEET_ID).getSheetByName(SETTINGS_SHEET);
     if (!sheet) throw new Error(`Zakładka "${SETTINGS_SHEET}" nie istnieje.`);
 
     const data = sheet.getDataRange().getValues();
-    if (!data || data.length === 0) throw new Error(`Zakładka "${SETTINGS_SHEET}" jest pusta.`);
+    if (!data || data.length === 0)
+      throw new Error(`Zakładka "${SETTINGS_SHEET}" jest pusta.`);
 
     const settings = Object.fromEntries(
-      data.map(row => {
-        if (row.length < 2 || !row[0]) throw new Error('Nieprawidłowy format danych w ustawieniach.');
+      data.map((row) => {
+        if (row.length < 2 || !row[0])
+          throw new Error('Nieprawidłowy format danych w ustawieniach.');
         return [row[0], decryptData(row[1]) || ''];
-      })
+      }),
     );
 
     return settings;

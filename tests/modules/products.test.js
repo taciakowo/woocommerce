@@ -1,4 +1,7 @@
-import { exportProductChanges, addNewProduct } from '../../src/modules/products.js';
+import {
+  exportProductChanges,
+  addNewProduct,
+} from '../../src/modules/products.js';
 import { sendToWooCommerce } from '../../src/utils/api.js';
 
 global.SpreadsheetApp = {

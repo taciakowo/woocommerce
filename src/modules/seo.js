@@ -9,7 +9,8 @@ dotenv.config();
  */
 globalThis.generateKeywordSuggestions = function () {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('produkty');
+    const sheet =
+      SpreadsheetApp.getActiveSpreadsheet().getSheetByName('produkty');
     if (!sheet) {
       throw new Error('Zakładka "produkty" nie istnieje.');
     }
@@ -24,17 +25,25 @@ globalThis.generateKeywordSuggestions = function () {
     }
 
     const keywords = new Set();
-    data.slice(1).forEach(row => {
+    data.slice(1).forEach((row) => {
       const name = row[nameIndex] || '';
       const description = row[descriptionIndex] || '';
-      name.split(' ').concat(description.split(' ')).forEach(word => {
-        if (word.length > 3) {
-          keywords.add(word.toLowerCase());
-        }
-      });
+      name
+        .split(' ')
+        .concat(description.split(' '))
+        .forEach((word) => {
+          if (word.length > 3) {
+            keywords.add(word.toLowerCase());
+          }
+        });
     });
 
-    logEvent('generateKeywordSuggestions', 'SUCCESS', null, `Wygenerowano ${keywords.size} słów kluczowych.`);
+    logEvent(
+      'generateKeywordSuggestions',
+      'SUCCESS',
+      null,
+      `Wygenerowano ${keywords.size} słów kluczowych.`,
+    );
     return Array.from(keywords);
   } catch (error) {
     logEvent('generateKeywordSuggestions', 'ERROR', null, error.message);

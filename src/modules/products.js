@@ -10,14 +10,18 @@ dotenv.config();
  */
 export function exportProductChanges(productId) {
   const settings = getSettings();
-  const sheet = SpreadsheetApp.openById(settings.SHEET_ID).getSheetByName(settings.PRODUCTS_SHEET);
+  const sheet = SpreadsheetApp.openById(settings.SHEET_ID).getSheetByName(
+    settings.PRODUCTS_SHEET,
+  );
   if (!sheet) throw new Error('Zakładka "PRODUCTS_SHEET" nie istnieje.');
 
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
   data.slice(1).forEach((row) => {
-    const productData = Object.fromEntries(headers.map((key, index) => [key, row[index]]));
+    const productData = Object.fromEntries(
+      headers.map((key, index) => [key, row[index]]),
+    );
 
     const url = `${settings.WOO_BASE_URL}/wp-json/wc/v3/products/${productId}`;
     sendToWooCommerce(url, 'put', productData);
@@ -33,14 +37,24 @@ export function exportProductChanges(productId) {
  */
 export function exportProductImages(productId, images) {
   if (!images || images.length === 0) {
-    logEvent('exportProductImages', 'Error', productId, 'Lista zdjęć jest pusta.');
+    logEvent(
+      'exportProductImages',
+      'Error',
+      productId,
+      'Lista zdjęć jest pusta.',
+    );
     return;
   }
-  const payload = { images: images.map(src => ({ src })) };
+  const payload = { images: images.map((src) => ({ src })) };
   const settings = getSettings();
   const url = `${settings.WOO_BASE_URL}/wp-json/wc/v3/products/${productId}`;
   const response = sendToWooCommerce(url, 'put', payload);
-  logEvent('exportProductImages', response.status === 200 ? 'SUCCESS' : 'Error', productId, response.status);
+  logEvent(
+    'exportProductImages',
+    response.status === 200 ? 'SUCCESS' : 'Error',
+    productId,
+    response.status,
+  );
 }
 
 globalThis.exportProductImages = exportProductImages;
@@ -57,7 +71,12 @@ export function addNewProduct(productData) {
   if (response.status === 201) {
     logEvent('addNewProduct', 'Success', response.data.id, null);
   } else {
-    logEvent('addNewProduct', 'Error', null, 'Błąd podczas dodawania produktu.');
+    logEvent(
+      'addNewProduct',
+      'Error',
+      null,
+      'Błąd podczas dodawania produktu.',
+    );
   }
 }
 
@@ -72,7 +91,12 @@ export function getProductById(productId) {
   const response = sendToWooCommerce(url, 'get');
 
   if (response.status !== 200) {
-    logEvent('getProductById', 'Error', productId, `Nie udało się pobrać produktu. Status: ${response.status}`);
+    logEvent(
+      'getProductById',
+      'Error',
+      productId,
+      `Nie udało się pobrać produktu. Status: ${response.status}`,
+    );
     throw new Error(`Nie udało się pobrać produktu. Sprawdź URL: ${url}`);
   }
 

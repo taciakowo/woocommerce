@@ -8,18 +8,30 @@ dotenv.config();
  * @param {Map<string, string>} params - Mapa parametrów produktu.
  */
 export function addMissingColumnsToProducts(params) {
-  const productSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('produkty');
-  const paramSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('woo_parametry');
+  const productSheet = SpreadsheetApp.openById(
+    process.env.SHEET_ID,
+  ).getSheetByName('produkty');
+  const paramSheet = SpreadsheetApp.openById(
+    process.env.SHEET_ID,
+  ).getSheetByName('woo_parametry');
   const headers = productSheet.getDataRange().getValues()[0];
   const wooParams = paramSheet.getDataRange().getValues();
 
   if (!wooParams || wooParams.length < 2) {
-    logEvent('addMissingColumnsToProducts', 'Error', null, 'Brak danych w zakładce "woo_parametry".');
+    logEvent(
+      'addMissingColumnsToProducts',
+      'Error',
+      null,
+      'Brak danych w zakładce "woo_parametry".',
+    );
     return;
   }
 
-  const activeParams = wooParams.slice(1).filter(row => String(row[1]).toLowerCase() === 'true').map(row => row[0]);
-  const newColumns = activeParams.filter(param => !headers.includes(param));
+  const activeParams = wooParams
+    .slice(1)
+    .filter((row) => String(row[1]).toLowerCase() === 'true')
+    .map((row) => row[0]);
+  const newColumns = activeParams.filter((param) => !headers.includes(param));
 
   if (newColumns.length > 0) {
     newColumns.forEach((column, index) => {
@@ -27,16 +39,28 @@ export function addMissingColumnsToProducts(params) {
       productSheet.getRange(1, colIndex).setValue(column);
     });
 
-    logEvent('addMissingColumnsToProducts', 'SUCCESS', null, `Dodano nowe kolumny: ${newColumns.join(', ')}`);
+    logEvent(
+      'addMissingColumnsToProducts',
+      'SUCCESS',
+      null,
+      `Dodano nowe kolumny: ${newColumns.join(', ')}`,
+    );
   } else {
-    logEvent('addMissingColumnsToProducts', 'INFO', null, 'Brak nowych kolumn do dodania.');
+    logEvent(
+      'addMissingColumnsToProducts',
+      'INFO',
+      null,
+      'Brak nowych kolumn do dodania.',
+    );
   }
 }
 
 globalThis.addMissingColumnsToProducts = addMissingColumnsToProducts;
 
 export function getColumns() {
-  const productSheet = SpreadsheetApp.openById(process.env.SHEET_ID).getSheetByName('produkty');
+  const productSheet = SpreadsheetApp.openById(
+    process.env.SHEET_ID,
+  ).getSheetByName('produkty');
   const headers = productSheet.getDataRange().getValues()[0];
   return headers;
 }

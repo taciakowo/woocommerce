@@ -13,7 +13,9 @@ export function scheduledProductExport() {
   const sheetId = process.env.SHEET_ID;
   const settings = getSettings();
   const now = new Date();
-  const productSheet = SpreadsheetApp.openById(sheetId).getSheetByName(settings.PRODUCTS_SHEET);
+  const productSheet = SpreadsheetApp.openById(sheetId).getSheetByName(
+    settings.PRODUCTS_SHEET,
+  );
   const data = productSheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -22,7 +24,10 @@ export function scheduledProductExport() {
   });
 }
 
-import { updateInventoryHistory, syncStockBalanced } from '../../src/modules/inventory.js';
+import {
+  updateInventoryHistory,
+  syncStockBalanced,
+} from '../../src/modules/inventory.js';
 import { fetchAllProductParameters } from '../../src/modules/parameters/fetch.js';
 import { getProductById } from '../../src/modules/products.js';
 
@@ -33,7 +38,10 @@ jest.mock('../../src/utils/logger.js', () => ({
 jest.mock('../../src/utils/api.js', () => ({
   sendToWooCommerce: jest.fn(() => ({
     status: 200,
-    data: { id: 123, attributes: [{ name: 'Color', options: ['Red', 'Blue'] }] },
+    data: {
+      id: 123,
+      attributes: [{ name: 'Color', options: ['Red', 'Blue'] }],
+    },
   })),
 }));
 
@@ -128,7 +136,7 @@ test('Zgłasza błąd, jeśli arkusz logów nie istnieje', () => {
   }));
 
   expect(() => logEvent('testFunction', 'ERROR', null, 'Błąd testowy')).toThrow(
-    'Nie udało się zapisać logu: Zakładka "logi" nie istnieje.'
+    'Nie udało się zapisać logu: Zakładka "logi" nie istnieje.',
   );
 });
 

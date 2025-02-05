@@ -14,16 +14,23 @@ const WOO_PARAMETERS_SHEET = 'woo_parametry';
  */
 function getSettings() {
   try {
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SETTINGS_SHEET);
+    const sheet =
+      SpreadsheetApp.openById(SHEET_ID).getSheetByName(SETTINGS_SHEET);
     if (!sheet) throw new Error(`Zakładka "${SETTINGS_SHEET}" nie istnieje.`);
 
     const data = sheet.getDataRange().getValues();
-    if (!data || data.length === 0) throw new Error(`Zakładka "${SETTINGS_SHEET}" jest pusta.`);
+    if (!data || data.length === 0)
+      throw new Error(`Zakładka "${SETTINGS_SHEET}" jest pusta.`);
 
-    return Object.fromEntries(data.map(row => {
-      if (row.length < 2 || !row[0]) throw new Error('Nieprawidłowy format danych w zakładce "ustawienia".');
-      return [row[0], row[1] || ''];
-    }));
+    return Object.fromEntries(
+      data.map((row) => {
+        if (row.length < 2 || !row[0])
+          throw new Error(
+            'Nieprawidłowy format danych w zakładce "ustawienia".',
+          );
+        return [row[0], row[1] || ''];
+      }),
+    );
   } catch (error) {
     logEvent('getSettings', 'Error', null, error.message);
     throw new Error(`Błąd podczas pobierania ustawień: ${error.message}`);
@@ -35,7 +42,9 @@ function getSettings() {
  */
 function logEvent(functionName, event, productId = null, error = null) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(LOGS_SHEET);
-  const timestamp = new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+  const timestamp = new Date().toLocaleString('pl-PL', {
+    timeZone: 'Europe/Warsaw',
+  });
   sheet.appendRow([timestamp, functionName, event, productId, error]);
 }
 
@@ -45,7 +54,12 @@ function logEvent(functionName, event, productId = null, error = null) {
 function sendToWooCommerce(url, method, payload = null) {
   const settings = getSettings();
   if (!url) {
-    logEvent('sendToWooCommerce', 'Error', null, 'URL jest wymagany do zapytania WooCommerce.');
+    logEvent(
+      'sendToWooCommerce',
+      'Error',
+      null,
+      'URL jest wymagany do zapytania WooCommerce.',
+    );
     return { status: 400, data: { message: 'URL jest wymagany' } };
   }
 
@@ -67,14 +81,29 @@ function sendToWooCommerce(url, method, payload = null) {
     const status = response.getResponseCode();
 
     if (status >= 400 && status < 500) {
-      logEvent('sendToWooCommerce', 'Client Error', null, `Status: ${status} | Message: ${response.getContentText()}`);
+      logEvent(
+        'sendToWooCommerce',
+        'Client Error',
+        null,
+        `Status: ${status} | Message: ${response.getContentText()}`,
+      );
     } else if (status >= 500) {
-      logEvent('sendToWooCommerce', 'Server Error', null, `Status: ${status} | Message: ${response.getContentText()}`);
+      logEvent(
+        'sendToWooCommerce',
+        'Server Error',
+        null,
+        `Status: ${status} | Message: ${response.getContentText()}`,
+      );
     }
 
     return { status, data: JSON.parse(response.getContentText()) };
   } catch (error) {
-    logEvent('sendToWooCommerce', 'Error', null, `Błąd połączenia z WooCommerce: ${error.message}`);
+    logEvent(
+      'sendToWooCommerce',
+      'Error',
+      null,
+      `Błąd połączenia z WooCommerce: ${error.message}`,
+    );
     return { status: 500, data: { message: 'Błąd połączenia z WooCommerce' } };
   }
 }
@@ -84,9 +113,10 @@ function sendToWooCommerce(url, method, payload = null) {
  */
 function getDynamicSheetId() {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SETTINGS_SHEET);
+    const sheet =
+      SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SETTINGS_SHEET);
     const data = sheet.getDataRange().getValues();
-    const idRow = data.find(row => row[0] === 'sheet_id');
+    const idRow = data.find((row) => row[0] === 'sheet_id');
     if (!idRow || idRow.length < 2 || !idRow[1]) {
       throw new Error('Nie znaleziono SHEET_ID w zakładce "ustawienia".');
     }
@@ -116,7 +146,12 @@ function getProductById() {
   const response = sendToWooCommerce(url, 'get');
 
   if (response.status !== 200) {
-    logEvent('getProductById', 'Error', null, `Nie udało się pobrać produktu. Status: ${response.status}`);
+    logEvent(
+      'getProductById',
+      'Error',
+      null,
+      `Nie udało się pobrać produktu. Status: ${response.status}`,
+    );
     throw new Error(`Nie udało się pobrać produktu. Sprawdź URL: ${url}`);
   }
 
@@ -132,11 +167,16 @@ function fetchProductCategories() {
   const response = sendToWooCommerce(url, 'get');
 
   if (response.status !== 200) {
-    logEvent('fetchProductCategories', 'Error', null, 'Nie udało się pobrać kategorii produktów.');
+    logEvent(
+      'fetchProductCategories',
+      'Error',
+      null,
+      'Nie udało się pobrać kategorii produktów.',
+    );
     return [];
   }
 
-  return response.data.map(category => `category: ${category.name}`);
+  return response.data.map((category) => `category: ${category.name}`);
 }
 
 /**
@@ -149,15 +189,18 @@ function fetchAllProductParameters() {
 
   // Podstawowe dane produktu
   Object.entries(product).forEach(([key, value]) => {
-    params.set(key, typeof value === 'object' ? JSON.stringify(value) : value || '');
+    params.set(
+      key,
+      typeof value === 'object' ? JSON.stringify(value) : value || '',
+    );
   });
 
   // Kategorie produktu
-  categories.forEach(category => params.set(category, ''));
+  categories.forEach((category) => params.set(category, ''));
 
   // Atrybuty
   if (Array.isArray(product.attributes)) {
-    product.attributes.forEach(attribute => {
+    product.attributes.forEach((attribute) => {
       const key = `attribute: ${attribute.name}`;
       const value = attribute.options ? attribute.options.join(', ') : '';
       params.set(key, value);
@@ -170,7 +213,12 @@ function fetchAllProductParameters() {
       params.set(`Image ${index + 1}`, image.src || '');
     });
   } else {
-    logEvent('fetchAllProductParameters', 'INFO', null, 'Brak zdjęć w danych produktu.');
+    logEvent(
+      'fetchAllProductParameters',
+      'INFO',
+      null,
+      'Brak zdjęć w danych produktu.',
+    );
   }
 
   return params;
@@ -181,13 +229,19 @@ function fetchAllProductParameters() {
  */
 function updateWooParametersSheet(params) {
   if (!(params instanceof Map)) {
-    logEvent('updateWooParametersSheet', 'Error', null, 'Nieprawidłowe dane parametrów. Oczekiwano obiektu Map.');
+    logEvent(
+      'updateWooParametersSheet',
+      'Error',
+      null,
+      'Nieprawidłowe dane parametrów. Oczekiwano obiektu Map.',
+    );
     return;
   }
 
-  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(WOO_PARAMETERS_SHEET);
+  const sheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(WOO_PARAMETERS_SHEET);
   const existingData = sheet.getDataRange().getValues();
-  const existingParams = new Set(existingData.map(row => row[0]));
+  const existingParams = new Set(existingData.map((row) => row[0]));
 
   const newData = [];
   params.forEach((value, key) => {
@@ -197,28 +251,45 @@ function updateWooParametersSheet(params) {
   });
 
   if (newData.length > 0) {
-    sheet.getRange(existingData.length + 1, 1, newData.length, 3).setValues(newData);
+    sheet
+      .getRange(existingData.length + 1, 1, newData.length, 3)
+      .setValues(newData);
   }
 
-  logEvent('updateWooParametersSheet', 'SUCCESS', null, 'WooCommerce parameters updated successfully.');
+  logEvent(
+    'updateWooParametersSheet',
+    'SUCCESS',
+    null,
+    'WooCommerce parameters updated successfully.',
+  );
 }
 
 /**
  * D1.5. Dodaje brakujące kolumny w zakładce "produkty".
  */
 function addMissingColumnsToProducts(params) {
-  const productSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
-  const paramSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(WOO_PARAMETERS_SHEET);
+  const productSheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
+  const paramSheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(WOO_PARAMETERS_SHEET);
   const headers = productSheet.getDataRange().getValues()[0];
   const wooParams = paramSheet.getDataRange().getValues();
 
   if (!wooParams || wooParams.length < 2) {
-    logEvent('addMissingColumnsToProducts', 'Error', null, 'Brak danych w zakładce "woo_parametry".');
+    logEvent(
+      'addMissingColumnsToProducts',
+      'Error',
+      null,
+      'Brak danych w zakładce "woo_parametry".',
+    );
     return;
   }
 
-  const activeParams = wooParams.slice(1).filter(row => String(row[1]).toLowerCase() === 'true').map(row => row[0]);
-  const newColumns = activeParams.filter(param => !headers.includes(param));
+  const activeParams = wooParams
+    .slice(1)
+    .filter((row) => String(row[1]).toLowerCase() === 'true')
+    .map((row) => row[0]);
+  const newColumns = activeParams.filter((param) => !headers.includes(param));
 
   if (newColumns.length > 0) {
     newColumns.forEach((column, index) => {
@@ -226,9 +297,19 @@ function addMissingColumnsToProducts(params) {
       productSheet.getRange(1, colIndex).setValue(column);
     });
 
-    logEvent('addMissingColumnsToProducts', 'SUCCESS', null, `Dodano nowe kolumny: ${newColumns.join(', ')}`);
+    logEvent(
+      'addMissingColumnsToProducts',
+      'SUCCESS',
+      null,
+      `Dodano nowe kolumny: ${newColumns.join(', ')}`,
+    );
   } else {
-    logEvent('addMissingColumnsToProducts', 'INFO', null, 'Brak nowych kolumn do dodania.');
+    logEvent(
+      'addMissingColumnsToProducts',
+      'INFO',
+      null,
+      'Brak nowych kolumn do dodania.',
+    );
   }
 }
 
@@ -240,7 +321,12 @@ function updateAllWooCommerceParameters() {
   if (params instanceof Map) {
     updateWooParametersSheet(params);
     addMissingColumnsToProducts(params);
-    logEvent('updateAllWooCommerceParameters', 'SUCCESS', null, 'WooCommerce parameters updated successfully.');
+    logEvent(
+      'updateAllWooCommerceParameters',
+      'SUCCESS',
+      null,
+      'WooCommerce parameters updated successfully.',
+    );
   }
 }
 
@@ -269,12 +355,18 @@ function getProductIdBySku(sku) {
  */
 function addNewProduct(row, rowNumber) {
   const settings = getSettings();
-  const productSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
+  const productSheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
   const headers = productSheet.getDataRange().getValues()[0];
   const requiredFields = ['sku', 'name', 'regular_price'];
   for (const field of requiredFields) {
     if (!row[headers.indexOf(field)]) {
-      logEvent('addNewProduct', 'Error', null, `Brak wymaganego pola: ${field} w wierszu ${rowNumber}`);
+      logEvent(
+        'addNewProduct',
+        'Error',
+        null,
+        `Brak wymaganego pola: ${field} w wierszu ${rowNumber}`,
+      );
       return;
     }
   }
@@ -289,10 +381,17 @@ function addNewProduct(row, rowNumber) {
 
   if (response.status === 201) {
     const productId = response.data.id;
-    productSheet.getRange(rowNumber, headers.indexOf('id') + 1).setValue(productId);
+    productSheet
+      .getRange(rowNumber, headers.indexOf('id') + 1)
+      .setValue(productId);
     logEvent('addNewProduct', 'SUCCESS', productId, 'Produkt został dodany.');
   } else {
-    logEvent('addNewProduct', 'Error', null, `Nie udało się dodać produktu. Status: ${response.status}`);
+    logEvent(
+      'addNewProduct',
+      'Error',
+      null,
+      `Nie udało się dodać produktu. Status: ${response.status}`,
+    );
   }
 }
 
@@ -301,7 +400,8 @@ function addNewProduct(row, rowNumber) {
  * Aktualizuje istniejące produkty na podstawie ich ID.
  */
 () => {
-  const productSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
+  const productSheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
   const data = productSheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -310,7 +410,12 @@ function addNewProduct(row, rowNumber) {
     const productId = row[headers.indexOf('id')];
 
     if (!productId) {
-      logEvent('exportProductChanges', 'Error', null, `Produkt w wierszu ${rowNumber} nie posiada ID.`);
+      logEvent(
+        'exportProductChanges',
+        'Error',
+        null,
+        `Produkt w wierszu ${rowNumber} nie posiada ID.`,
+      );
       return;
     }
 
@@ -325,12 +430,22 @@ function addNewProduct(row, rowNumber) {
     const response = sendToWooCommerce(url, 'put', payload);
 
     if (response.status === 200) {
-      logEvent('exportProductChanges', 'SUCCESS', productId, 'Zaktualizowano produkt.');
+      logEvent(
+        'exportProductChanges',
+        'SUCCESS',
+        productId,
+        'Zaktualizowano produkt.',
+      );
     } else {
-      logEvent('exportProductChanges', 'Error', productId, `Nie udało się zaktualizować produktu. Status: ${response.status}`);
+      logEvent(
+        'exportProductChanges',
+        'Error',
+        productId,
+        `Nie udało się zaktualizować produktu. Status: ${response.status}`,
+      );
     }
   });
-}
+};
 
 /**
  * D2.4. Eksportuje zdjęcia produktów do WooCommerce.
@@ -338,18 +453,33 @@ function addNewProduct(row, rowNumber) {
  */
 function exportProductImages(productId, images) {
   if (!images || images.length === 0) {
-    logEvent('exportProductImages', 'Error', productId, 'Lista zdjęć jest pusta.');
+    logEvent(
+      'exportProductImages',
+      'Error',
+      productId,
+      'Lista zdjęć jest pusta.',
+    );
     return;
   }
 
-  const payload = { images: images.map(src => ({ src })) };
+  const payload = { images: images.map((src) => ({ src })) };
   const url = `${getSettings().url_json}/${productId}`;
   const response = sendToWooCommerce(url, 'put', payload);
 
   if (response.status === 200) {
-    logEvent('exportProductImages', 'SUCCESS', productId, 'Zaktualizowano zdjęcia produktu.');
+    logEvent(
+      'exportProductImages',
+      'SUCCESS',
+      productId,
+      'Zaktualizowano zdjęcia produktu.',
+    );
   } else {
-    logEvent('exportProductImages', 'Error', productId, `Nie udało się zaktualizować zdjęć. Status: ${response.status}`);
+    logEvent(
+      'exportProductImages',
+      'Error',
+      productId,
+      `Nie udało się zaktualizować zdjęć. Status: ${response.status}`,
+    );
   }
 }
 
@@ -359,7 +489,8 @@ function exportProductImages(productId, images) {
  */
 function scheduledProductExport() {
   const now = new Date();
-  const productSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
+  const productSheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
   const data = productSheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -381,7 +512,12 @@ function scheduledProductExport() {
     }
   });
 
-  logEvent('scheduledProductExport', 'SUCCESS', null, 'Zaplanowany eksport zakończony.');
+  logEvent(
+    'scheduledProductExport',
+    'SUCCESS',
+    null,
+    'Zaplanowany eksport zakończony.',
+  );
 }
 
 /* ===================== SYNCHRONIZACJA STANÓW MAGAZYNOWYCH D3 ===================== */
@@ -391,7 +527,8 @@ function scheduledProductExport() {
  * W zakładce magazyn zapisuje datę, godzinę i stan po zmianie.
  */
 function updateInventoryHistory(sku, newStock, source) {
-  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(INVENTORY_SHEET);
+  const sheet =
+    SpreadsheetApp.openById(SHEET_ID).getSheetByName(INVENTORY_SHEET);
   const data = sheet.getDataRange().getDisplayValues();
   const headers = data[0];
 
@@ -408,7 +545,9 @@ function updateInventoryHistory(sku, newStock, source) {
     row++;
   }
 
-  const timestamp = new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+  const timestamp = new Date().toLocaleString('pl-PL', {
+    timeZone: 'Europe/Warsaw',
+  });
   sheet.getRange(row, skuIndex + 1).setValue(newStock); // Zapisz stan
   sheet.getRange(row + 1, skuIndex + 1).setValue(`${timestamp} (${source})`); // Zapisz datę i źródło
 }
@@ -426,7 +565,8 @@ function syncStockBalanced() {
 
   try {
     const settings = getSettings();
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
+    const sheet =
+      SpreadsheetApp.openById(SHEET_ID).getSheetByName(PRODUCTS_SHEET);
     const data = sheet.getDataRange().getDisplayValues();
     const headers = data[0];
 
@@ -436,7 +576,11 @@ function syncStockBalanced() {
     const lastSyncIndex = headers.indexOf('last_sync');
 
     if ([idIndex, stockIndex, initialStockIndex, lastSyncIndex].includes(-1)) {
-      logEvent('Error', null, 'Missing required columns: id, stock_quantity, initial_stock, or last_sync.');
+      logEvent(
+        'Error',
+        null,
+        'Missing required columns: id, stock_quantity, initial_stock, or last_sync.',
+      );
       return;
     }
 
@@ -457,14 +601,22 @@ function syncStockBalanced() {
         const wooStock = parseInt(response.data.stock_quantity, 10) || 0;
 
         if (sheetStock !== initialStock && wooStock === initialStock) {
-          const updateResponse = sendToWooCommerce(url, 'put', { stock_quantity: sheetStock });
+          const updateResponse = sendToWooCommerce(url, 'put', {
+            stock_quantity: sheetStock,
+          });
           if (updateResponse.status === 200) {
             sheet.getRange(i + 2, initialStockIndex + 1).setValue(sheetStock);
-            sheet.getRange(i + 2, lastSyncIndex + 1).setValue(
-              `${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })} (G->W)`
-            );
+            sheet
+              .getRange(i + 2, lastSyncIndex + 1)
+              .setValue(
+                `${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })} (G->W)`,
+              );
             updateInventoryHistory(response.data.sku, sheetStock, 'G->W');
-            logEvent('Stock updated', productId, `WooCommerce updated to ${sheetStock}`);
+            logEvent(
+              'Stock updated',
+              productId,
+              `WooCommerce updated to ${sheetStock}`,
+            );
           }
         } else if (wooStock !== initialStock) {
           const delta = sheetStock - initialStock;
@@ -472,13 +624,21 @@ function syncStockBalanced() {
 
           sheet.getRange(i + 2, stockIndex + 1).setValue(newStock);
           sheet.getRange(i + 2, initialStockIndex + 1).setValue(newStock);
-          sheet.getRange(i + 2, lastSyncIndex + 1).setValue(
-            `${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })} (W->G)`
-          );
+          sheet
+            .getRange(i + 2, lastSyncIndex + 1)
+            .setValue(
+              `${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })} (W->G)`,
+            );
           updateInventoryHistory(response.data.sku, newStock, 'W->G');
-          const updateResponse = sendToWooCommerce(url, 'put', { stock_quantity: newStock });
+          const updateResponse = sendToWooCommerce(url, 'put', {
+            stock_quantity: newStock,
+          });
           if (updateResponse.status === 200) {
-            logEvent('Balanced stock updated', productId, `New stock: ${newStock}`);
+            logEvent(
+              'Balanced stock updated',
+              productId,
+              `New stock: ${newStock}`,
+            );
           }
         }
       }
@@ -512,9 +672,14 @@ function onEdit(e) {
  */
 function scheduleSync() {
   const allTriggers = ScriptApp.getProjectTriggers();
-  const alreadyScheduled = allTriggers.some(trigger => trigger.getHandlerFunction() === 'syncStockBalanced');
+  const alreadyScheduled = allTriggers.some(
+    (trigger) => trigger.getHandlerFunction() === 'syncStockBalanced',
+  );
   if (!alreadyScheduled) {
-    ScriptApp.newTrigger('syncStockBalanced').timeBased().everyMinutes(2).create();
+    ScriptApp.newTrigger('syncStockBalanced')
+      .timeBased()
+      .everyMinutes(2)
+      .create();
     logEvent('Scheduled', null, 'Sync stock scheduled every 2 minutes.');
   }
 }

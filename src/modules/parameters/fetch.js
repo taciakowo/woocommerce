@@ -16,15 +16,18 @@ export function fetchAllProductParameters() {
 
   // Podstawowe dane produktu
   Object.entries(product).forEach(([key, value]) => {
-    params.set(key, typeof value === 'object' ? JSON.stringify(value) : value || '');
+    params.set(
+      key,
+      typeof value === 'object' ? JSON.stringify(value) : value || '',
+    );
   });
 
   // Kategorie produktu
-  categories.forEach(category => params.set(category, ''));
+  categories.forEach((category) => params.set(category, ''));
 
   // Atrybuty produktu
   if (Array.isArray(product.attributes)) {
-    product.attributes.forEach(attribute => {
+    product.attributes.forEach((attribute) => {
       const key = `attribute: ${attribute.name}`;
       const value = attribute.options ? attribute.options.join(', ') : '';
       params.set(key, value);
@@ -37,7 +40,12 @@ export function fetchAllProductParameters() {
       params.set(`Image ${index + 1}`, image.src || '');
     });
   } else {
-    logEvent('fetchAllProductParameters', 'INFO', null, 'Brak zdjęć w danych produktu.');
+    logEvent(
+      'fetchAllProductParameters',
+      'INFO',
+      null,
+      'Brak zdjęć w danych produktu.',
+    );
   }
 
   return params;

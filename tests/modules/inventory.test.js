@@ -1,5 +1,8 @@
 import dotenv from 'dotenv';
-import { updateInventoryHistory, syncStockBalanced } from '../../src/modules/inventory.js';
+import {
+  updateInventoryHistory,
+  syncStockBalanced,
+} from '../../src/modules/inventory.js';
 import { sendToWooCommerce } from '../../src/utils/api.js';
 import { getSettings } from '../../src/utils/spreadsheet.js';
 
@@ -12,7 +15,10 @@ jest.mock('../../src/utils/logger.js', () => ({
 jest.mock('../../src/utils/api.js', () => ({
   sendToWooCommerce: jest.fn(() => ({
     status: 200,
-    data: { id: 123, attributes: [{ name: 'Color', options: ['Red', 'Blue'] }] },
+    data: {
+      id: 123,
+      attributes: [{ name: 'Color', options: ['Red', 'Blue'] }],
+    },
   })),
 }));
 
@@ -44,9 +50,7 @@ global.SpreadsheetApp = {
         ]),
       })),
       getRange: jest.fn(() => ({
-        getValues: jest.fn(() => [
-          [123, 20, 15, ''],
-        ]),
+        getValues: jest.fn(() => [[123, 20, 15, '']]),
         setValue: jest.fn(),
       })),
       appendRow: jest.fn(),
@@ -57,7 +61,9 @@ global.SpreadsheetApp = {
 test('Poprawnie aktualizuje historię stanów magazynowych', () => {
   updateInventoryHistory('sku1', 50, 'Manual');
   expect(global.SpreadsheetApp.openById).toHaveBeenCalled();
-  expect(global.SpreadsheetApp.openById().getSheetByName().appendRow).toHaveBeenCalled();
+  expect(
+    global.SpreadsheetApp.openById().getSheetByName().appendRow,
+  ).toHaveBeenCalled();
 });
 
 test('Synchronizuje stany magazynowe', () => {
@@ -69,9 +75,7 @@ test('Synchronizuje stany magazynowe', () => {
       ]),
     })),
     getRange: jest.fn(() => ({
-      getValues: jest.fn(() => [
-        [123, 20, 15, ''],
-      ]),
+      getValues: jest.fn(() => [[123, 20, 15, '']]),
       setValue: jest.fn(),
     })),
   };

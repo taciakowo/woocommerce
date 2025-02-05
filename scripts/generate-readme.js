@@ -17,8 +17,8 @@ function buildFileStructure(dirPath, indent = '') {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
   return entries
-    .filter(entry => entry.name !== 'Kod.js') // Ignoruj plik Kod.js
-    .map(entry => {
+    .filter((entry) => entry.name !== 'Kod.js') // Ignoruj plik Kod.js
+    .map((entry) => {
       const fullPath = path.join(dirPath, entry.name);
       if (entry.isDirectory()) {
         return `${indent}├── ${entry.name}/\n${buildFileStructure(fullPath, indent + '│   ')}`;
@@ -51,10 +51,11 @@ function extractDescription(filePath) {
  */
 function listFilesWithDescriptions(dirPath) {
   if (!fs.existsSync(dirPath)) return 'Brak modułów do wyświetlenia.';
-  
-  return fs.readdirSync(dirPath, { withFileTypes: true })
-    .filter(entry => entry.isFile())
-    .map(file => {
+
+  return fs
+    .readdirSync(dirPath, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((file) => {
       const filePath = path.join(dirPath, file.name);
       const description = extractDescription(filePath);
       return `- **${file.name}**: ${description}`;

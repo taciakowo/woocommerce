@@ -15,10 +15,14 @@ export function updateInventoryHistory(sku, newStock, source) {
   try {
     const sheetId = process.env.SHEET_ID;
     const settings = getSettings();
-    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(settings.INVENTORY_SHEET);
+    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(
+      settings.INVENTORY_SHEET,
+    );
     if (!sheet) throw new Error('Zakładka "INVENTORY_SHEET" nie istnieje.');
 
-    const timestamp = new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+    const timestamp = new Date().toLocaleString('pl-PL', {
+      timeZone: 'Europe/Warsaw',
+    });
     sheet.appendRow([sku, newStock, timestamp, source]);
 
     logEvent('updateInventoryHistory', 'SUCCESS', sku, null);
@@ -34,14 +38,21 @@ export function updateInventoryHistory(sku, newStock, source) {
 export function syncStockBalanced() {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(30000)) {
-    logEvent('syncStockBalanced', 'Error', null, 'Another sync process is running.');
+    logEvent(
+      'syncStockBalanced',
+      'Error',
+      null,
+      'Another sync process is running.',
+    );
     return;
   }
 
   try {
     const sheetId = process.env.SHEET_ID;
     const settings = getSettings();
-    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(settings.PRODUCTS_SHEET);
+    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(
+      settings.PRODUCTS_SHEET,
+    );
     if (!sheet) throw new Error('Zakładka "PRODUCTS_SHEET" nie istnieje.');
 
     const data = sheet.getDataRange().getValues();

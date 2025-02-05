@@ -1,6 +1,9 @@
 import { fetchProductCategories } from './modules/category.js';
 import { updateAllWooCommerceParameters } from './modules/parameters/update.js';
-import { exportProductImages, exportProductChanges } from './modules/products.js';
+import {
+  exportProductImages,
+  exportProductChanges,
+} from './modules/products.js';
 import { syncStockBalanced } from './modules/sync.js';
 import { generateKeywordSuggestions } from './modules/seo.js';
 import { fetchAllProductParameters } from './modules/parameters.js';
@@ -33,7 +36,7 @@ function buildFileStructure(dirPath, indent = '') {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
   return entries
-    .map(entry => {
+    .map((entry) => {
       const fullPath = path.join(dirPath, entry.name);
       if (entry.isDirectory()) {
         return `${indent}├── ${entry.name}/\n${buildFileStructure(fullPath, indent + '│   ')}`;
@@ -69,14 +72,15 @@ function extractDescription(filePath) {
  */
 function listFilesWithDescriptions(dirPath) {
   if (!fs.existsSync(dirPath)) return 'Brak modułów do wyświetlenia.';
-  return fs.readdirSync(dirPath)
-    .map(file => {
+  return fs
+    .readdirSync(dirPath)
+    .map((file) => {
       const filePath = path.join(dirPath, file);
       if (isDirectory(filePath)) return ''; // Ignorujemy katalogi
       const description = extractDescription(filePath);
       return `- **${file}**: ${description}`;
     })
-    .filter(entry => entry !== '') // Usuwa puste wpisy
+    .filter((entry) => entry !== '') // Usuwa puste wpisy
     .join('\n');
 }
 
@@ -165,7 +169,9 @@ function onOpen() {
 globalThis.runUpdateParameters = function () {
   try {
     updateAllWooCommerceParameters();
-    SpreadsheetApp.getUi().alert('Parametry WooCommerce zostały zaktualizowane.');
+    SpreadsheetApp.getUi().alert(
+      'Parametry WooCommerce zostały zaktualizowane.',
+    );
   } catch (error) {
     SpreadsheetApp.getUi().alert(`Błąd: ${error.message}`);
   }
@@ -198,7 +204,9 @@ globalThis.runExportImages = function () {
 globalThis.runFetchCategories = function () {
   try {
     const categories = fetchProductCategories();
-    SpreadsheetApp.getUi().alert(`Pobrano ${categories.length} kategorii z WooCommerce.`);
+    SpreadsheetApp.getUi().alert(
+      `Pobrano ${categories.length} kategorii z WooCommerce.`,
+    );
   } catch (error) {
     SpreadsheetApp.getUi().alert(`Błąd: ${error.message}`);
   }
@@ -207,7 +215,9 @@ globalThis.runFetchCategories = function () {
 globalThis.runGenerateKeywords = function () {
   try {
     const keywords = generateKeywordSuggestions();
-    SpreadsheetApp.getUi().alert(`Wygenerowano słowa kluczowe: ${keywords.join(', ')}`);
+    SpreadsheetApp.getUi().alert(
+      `Wygenerowano słowa kluczowe: ${keywords.join(', ')}`,
+    );
   } catch (error) {
     SpreadsheetApp.getUi().alert(`Błąd: ${error.message}`);
   }
@@ -225,7 +235,9 @@ globalThis.runExportChanges = function () {
 globalThis.runSyncStock = function () {
   try {
     syncStockBalanced();
-    SpreadsheetApp.getUi().alert('Synchronizacja stanów magazynowych zakończona.');
+    SpreadsheetApp.getUi().alert(
+      'Synchronizacja stanów magazynowych zakończona.',
+    );
   } catch (error) {
     SpreadsheetApp.getUi().alert(`Błąd: ${error.message}`);
   }

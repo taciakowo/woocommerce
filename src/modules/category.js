@@ -17,11 +17,16 @@ export function fetchProductCategories() {
   const response = sendToWooCommerce(url, 'get');
 
   if (response.status !== 200) {
-    logEvent('fetchProductCategories', 'Error', null, 'Nie udało się pobrać kategorii produktów.');
+    logEvent(
+      'fetchProductCategories',
+      'Error',
+      null,
+      'Nie udało się pobrać kategorii produktów.',
+    );
     return [];
   }
 
-  categoryCache = response.data.map(category => `category: ${category.name}`);
+  categoryCache = response.data.map((category) => `category: ${category.name}`);
   return categoryCache;
 }
 

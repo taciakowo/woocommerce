@@ -28,6 +28,6 @@ test('Zgłasza błąd, jeśli arkusz logów nie istnieje', () => {
   }));
 
   expect(() => logEvent('testFunction', 'ERROR', null, 'Błąd testowy')).toThrow(
-    'Nie udało się zapisać logu: Zakładka "logi" nie istnieje.'
+    'Nie udało się zapisać logu: Zakładka "logi" nie istnieje.',
   );
 });
