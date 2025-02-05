@@ -1,18 +1,5 @@
 import { exportProductChanges, addNewProduct } from '../../src/modules/products.js';
 import { sendToWooCommerce } from '../../src/utils/api.js';
-import { getSettings } from '../../src/utils/spreadsheet.js';
-
-jest.mock('../../src/utils/logger.js', () => ({
-  logEvent: jest.fn(),
-}));
-
-jest.mock('../../src/utils/api.js', () => ({
-  sendToWooCommerce: jest.fn(),
-}));
-
-jest.mock('../../src/modules/products.js', () => ({
-  getProductById: jest.fn(() => ({ id: 123, name: 'Test Product' })),
-}));
 
 global.SpreadsheetApp = {
   openById: jest.fn(() => ({
@@ -26,6 +13,18 @@ global.SpreadsheetApp = {
     })),
   })),
 };
+
+jest.mock('../../src/utils/api.js', () => ({
+  sendToWooCommerce: jest.fn(),
+}));
+
+jest.mock('../../src/utils/spreadsheet.js', () => ({
+  getSettings: jest.fn(() => ({
+    SHEET_ID: 'test_sheet_id',
+    PRODUCTS_SHEET: 'test_products_sheet',
+    WOO_BASE_URL: 'test_woo_base_url',
+  })),
+}));
 
 test('Eksportuje zmiany produktu', () => {
   exportProductChanges(123);

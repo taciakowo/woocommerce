@@ -6,11 +6,13 @@
     "type": "module",
     "scripts": {
         "start": "clasp push",
-        "lint": "eslint . --config .eslintrc.json",
+        "lint": "eslint .",
         "deploy": "clasp push",
-        "test": "jest",
+        "test": "jest --transformIgnorePatterns \"node_modules/(?!@babel/runtime)\"",
         "generate-docs": "node scripts/generate-readme.js",
-        "jsdoc": "jsdoc -c jsdoc.json"
+        "jsdoc": "jsdoc -c jsdoc.json",
+        "coverage": "jest-coverage-badges",
+        "format": "prettier --write ."
     },
     "keywords": [
         "google-sheets",
@@ -24,16 +26,24 @@
         "dotenv": "^10.0.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.14.6",
-        "@babel/preset-env": "^7.14.7",
-        "babel-jest": "^27.0.6",
+        "@babel/core": "^7.15.0",
+        "@babel/preset-env": "^7.15.0",
+        "babel-jest": "^27.0.0",
         "eslint": "^7.32.0",
-        "eslint-config-prettier": "^10.0.1",
         "eslint-plugin-googleappsscript": "^1.0.0",
-        "eslint-plugin-prettier": "^3.4.1",
-        "jest": "^27.5.1",
+        "eslint-plugin-prettier": "^3.4.0",
+        "jest": "^27.0.0",
         "jest-coverage-badges": "^1.0.0",
-        "mocha": "^11.1.0",
-        "prettier": "^2.8.8"
+        "mocha": "^9.0.0",
+        "prettier": "^2.3.2"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.js$": "babel-jest"
+        },
+        "transformIgnorePatterns": [
+            "/node_modules/"
+        ],
+        "testEnvironment": "node"
     }
 }
