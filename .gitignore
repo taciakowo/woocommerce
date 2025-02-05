@@ -1,29 +1,35 @@
-# Ignoruj pliki konfiguracji CLASP
+# Ignorowanie plików konfiguracji Google Apps Script (CLASP)
 .clasp.json
 .claspignore
 
-# Ignoruj katalogi build i tymczasowe
+# Ignorowanie katalogów build i zależności
 node_modules/
 dist/
 build/
 
-# Ignoruj pliki związane z edytorami
+# Ignorowanie plików edytorów (VS Code, WebStorm, itp.)
 .vscode/
 .idea/
 
-# Ignoruj dane sesji i tymczasowe pliki systemowe
+# Ignorowanie plików sesji, logów i plików tymczasowych
 *.log
 *.tmp
+*.lock
 .DS_Store
 .env
+.env.local
+.env.development
+.env.production
 
-# Ignoruj pliki blokady i zależności lokalnych
+# Ignorowanie plików związanych z zależnościami i wersjonowaniem
 package-lock.json
 yarn.lock
 
-# Ignoruj pliki blokady i zależności lokalnych
+# Ignorowanie plików konfiguracyjnych użytkownika i poświadczeń
 settings.json
-node_modules/
-.env
 credentials.json
 client_secret.json
+
+# Ignorowanie katalogów z wynikami testów i raportami
+coverage/
+lcov-report/
