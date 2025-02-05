@@ -29,6 +29,7 @@ yarn.lock
 settings.json
 credentials.json
 client_secret.json
+Kod.js
 
 # Ignorowanie katalogów z wynikami testów i raportami
 coverage/
