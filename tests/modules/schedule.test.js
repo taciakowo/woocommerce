@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { scheduledProductExport } from '../../src/modules/schedule.js';
 
 dotenv.config();

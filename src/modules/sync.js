@@ -1,7 +1,7 @@
 import { logEvent } from '../utils/logger.js';
 import { sendToWooCommerce } from '../utils/api.js';
 import { getSettings } from '../utils/spreadsheet.js';
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 
 dotenv.config();
 

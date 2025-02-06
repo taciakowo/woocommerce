@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { fetchAllProductParameters } from '../../src/modules/parameters/fetch.js';
 import { sendToWooCommerce } from '../../src/utils/api.js';
 

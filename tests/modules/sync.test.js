@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { syncStockBalanced } from '../../src/modules/sync.js';
 
 dotenv.config();

@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import CryptoJS from 'crypto-js';
 
 dotenv.config();

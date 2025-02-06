@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { fetchAllProductParameters } from './fetch.js';
 import { updateWooParametersSheet } from './update.js';
 

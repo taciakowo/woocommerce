@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import { initializeCache, getSheetId } from '../../src/utils/initial.js';
 import { getSheetId, setSheetId } from '../../src/utils/initial.js';
 
 dotenv.config();

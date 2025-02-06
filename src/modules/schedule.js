@@ -2,7 +2,7 @@ import { getProductIdBySku, addNewProduct } from './products.js';
 import { exportProductChanges } from './export.js';
 import { logEvent } from '../utils/logger.js';
 import { getSettings } from '../utils/spreadsheet.js';
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 
 dotenv.config();
 
@@ -114,7 +114,7 @@ test('Poprawnie wyciąga parametry produktu', async () => {
   expect(getProductById).toHaveBeenCalledTimes(1);
 });
 
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { logEvent } from '../../src/utils/logger.js';
 
 global.SpreadsheetApp = {
@@ -140,7 +140,6 @@ test('Zgłasza błąd, jeśli arkusz logów nie istnieje', () => {
   );
 });
 
-import dotenv from 'dotenv';
 import { getSettings } from '../../src/utils/spreadsheet.js';
 
 dotenv.config();

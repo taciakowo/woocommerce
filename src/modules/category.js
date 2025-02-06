@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { getSettings } from '../utils/spreadsheet.js';
 import { sendToWooCommerce } from '../utils/api.js';
 import { logEvent } from '../utils/logger.js';

@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 import { getSettings } from '../../src/utils/spreadsheet.js';
 
 dotenv.config();

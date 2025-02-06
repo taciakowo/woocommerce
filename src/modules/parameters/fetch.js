@@ -1,7 +1,7 @@
 import { logEvent } from '../../utils/logger.js';
 import { getProductById } from '../products.js';
 import { fetchProductCategories } from '../category.js';
-import dotenv from 'dotenv';
+import '../../utils/dotenv.config.js';
 
 dotenv.config();
 
