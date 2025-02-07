@@ -1,8 +1,6 @@
-import '../../utils/dotenv.config.js';
-import { fetchAllProductParameters } from './fetch.js';
-import { updateWooParametersSheet } from './update.js';
-
-dotenv.config();
+// src/modules/parameters/index.js
+import { fetchAllProductParameters } from "./fetch.js";
+import { updateWooParametersSheet } from "./update.js";
 
 export function getParameters() {
   const params = fetchAllProductParameters();
